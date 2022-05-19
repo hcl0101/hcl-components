@@ -27,10 +27,6 @@ export default new Router({
           name: "countUp",
           component: () => import("./views/countUp/CountUp.vue")
         }, {
-          path: "/drawer",
-          name: "drawer",
-          component: () => import("./views/drawer/Drawer.vue")
-        }, {
           path: "/directory",
           name: "directory",
           component: () => import("./views/directory/Directory.vue")

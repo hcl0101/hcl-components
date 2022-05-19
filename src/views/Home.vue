@@ -30,7 +30,6 @@
           { index: '/button', title: '按钮' },
           { index: '/contextMenu', title: '右键菜单' },
           { index: '/countUp', title: '数字渐变' },
-          { index: '/drawer', title: '抽屉' },
           { index: '/directory', title: '目录' },
           { index: '/loading', title: '加载中' },
         ]
