@@ -5,14 +5,15 @@
         <li
           v-for="item in menu"
           :key="item.index"
-          :class="{ 'active': active === item.index }"
-          @click="handleClick(item.index)">
+          :class="{ active: active === item.index }"
+          @click="handleClick(item.index)"
+        >
           {{ item.title }}
         </li>
       </ul>
     </aside>
     <main>
-      <transition name="fade">  
+      <transition name="fade">
         <router-view />
       </transition>
     </main>
@@ -20,64 +21,65 @@
 </template>
 
 <script>
-  export default {
-    name: "home",
+export default {
+  name: "home",
 
-    data() {
-      return {
-        active: '/button',
-        menu: [
-          { index: '/button', title: '按钮' },
-          { index: '/contextMenu', title: '右键菜单' },
-          { index: '/countUp', title: '数字渐变' },
-          { index: '/directory', title: '目录' },
-          { index: '/loading', title: '加载中' },
-        ]
-      }
-    },
+  data() {
+    return {
+      active: "/button",
+      menu: [
+        { index: "/button", title: "按钮" },
+        { index: "/contextMenu", title: "右键菜单" },
+        { index: "/countUp", title: "数字渐变" },
+        { index: "/directory", title: "目录" },
+        { index: "/loading", title: "加载中" },
+        { index: "/dynamicForm", title: "动态表单" },
+      ],
+    };
+  },
 
-    created() {
-      if (this.active) {
-        this.$router.push(this.active);
-      }
-    },
-
-    methods: {
-      handleClick(index) {
-        this.active = index;
-        this.$router.push(index);
-      }
+  created() {
+    if (this.active) {
+      this.$router.push(this.active);
     }
-  };
+  },
+
+  methods: {
+    handleClick(index) {
+      this.active = index;
+      this.$router.push(index);
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .hcl {
-    height: 100%;
-  }
-  .hcl {
-    display: flex;
-    aside {
-      width: 240px;
-      color: #e8e8e8;
-      background-color: #1E1E1E;
-      li {
-        padding: 5px 15px;
-        line-height: 30px;
-        &:hover {
-          background-color: #0080cb;
-          opacity: .8;
-        }
-      }
-      .active {
+.hcl {
+  height: 100%;
+}
+.hcl {
+  display: flex;
+  aside {
+    width: 240px;
+    color: #e8e8e8;
+    background-color: #1e1e1e;
+    li {
+      padding: 5px 15px;
+      line-height: 30px;
+      &:hover {
         background-color: #0080cb;
+        opacity: 0.8;
       }
     }
-    main {
-      flex: 1;
-      width: 0;
-      padding: 15px 30px;
-      overflow: auto;
+    .active {
+      background-color: #0080cb;
     }
   }
+  main {
+    flex: 1;
+    width: 0;
+    padding: 15px 30px;
+    overflow: auto;
+  }
+}
 </style>
