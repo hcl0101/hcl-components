@@ -43,7 +43,15 @@ export default {
       const { $listen, tplList } = formFormat.call(this, this.formConfig);
       this.$listen = $listen;
       this.tplList = tplList;
-      console.log(1111111, tplList);
+      const fieldKey = "formData.basic.name";
+      this.registerActionPublish(fieldKey, (val) => {
+        console.log(1111, val);
+        return true;
+      });
+      this.registerActionPublish("formData.basic.sex", (val) => {
+        console.log(2222, val);
+        return true;
+      });
     },
     /**
      * 注册监听动态发布

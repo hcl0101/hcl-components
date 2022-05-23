@@ -61,7 +61,7 @@
           $listen.$waitSubscribe[field].push({
             ...o,
             rules,
-            default: value,
+            targetVal: value,
             validator: (watchValue) => {
               return watchValue === value;
             },
@@ -69,16 +69,20 @@
         });
       });
       // 需要监听当前组件的值变更
-      fieldItem.$$watchValue = (value, rowNumber) => {
-        const isInTable = rowNumber || rowNumber === 0;
-        const fieldId = isInTable ? o.fieldId + "," + rowNumber : o.fieldId;
+      fieldItem.$$watchValue = (value) => {
+        const fieldId = o.fieldId;
         if ($listen.$publish[fieldId]) {
-          $listen.$publish[fieldId].forEach((f) => f(value));
+          const map = {};
+          $listen.$publish[fieldId].forEach(({ fn, index }) => {
+            // fn(value) 的返回值是对应组件的editStatus
+            // 当订阅者中的函数未执行，或执行结果为true时，继续执行该订阅者中的其他函数
+            // 即：当执行到为false时，不执行其余函数
+            if (map[index] === undefined || map[index] === true) {
+              map[index] = fn(value);
+            }
+          });
         }
       };
-    }
-    if (o.systemField === 1) {
-      $listen.$systemField[o.fieldId] = fieldItem.$index.join('.');
     }
 
     return fieldItem;
@@ -97,8 +101,8 @@ function format(list = []) {
   }
   const rootIndex = setIndex();
   const $listen = {
-    $waitSubscribe: {}, // 订阅者
     $publish: {},       // 发布者
+    $waitSubscribe: {}, // 订阅者
     $tranform: {},      // 数据转换
     $actionValue: {},   // 动态赋值
     $actionPublish: {}, // 动态响应的发布

@@ -30,29 +30,29 @@
     />
   </el-select>
   <el-radio-group
-    v-else-if="item.componentName === 'el-radio'"
+    v-else-if="item.component === 'el-radio'"
     v-model="inpValue"
+    :disabled="inpDisabled"
     @change="elRadioChange"
   >
     <el-radio
       v-for="(radioItem, index) in optionList"
       :key="`${radioItem.value}_${index}`"
       :label="radioItem.value"
-      :disabled="inpDisabled"
     >
       {{ radioItem.label }}
     </el-radio>
   </el-radio-group>
   <el-checkbox-group
-    v-else-if="item.componentName === 'el-checkbox'"
+    v-else-if="item.component === 'el-checkbox'"
     v-model="inpValue"
+    :disabled="inpDisabled"
     @change="elCheckBoxChange"
   >
     <el-checkbox
       v-for="(checkboxItem, index) in optionList"
       :key="`${checkboxItem.value}_${index}`"
-      :label="checkboxItem.value"
-      :disabled="inpDisabled"
+      :label="checkboxItem.label"
     >
       {{ checkboxItem.label }}
     </el-checkbox>
@@ -89,13 +89,15 @@ export default {
   },
   data() {
     return {
-      inpValue: "",
+      inpValue: null,
       optionList: [],
       editStatus: true,
       defaultInputMaxLength: 20,
       defaultTextareaMaxLength: 100,
-      inputDefaultPlaceholder: "请输入",
-      selectDefaultPlaceholder: "请选择"
+      defaultPlaceholder: {
+        input: "请输入",
+        select: "请选择",
+      },
     };
   },
   computed: {
@@ -116,13 +118,28 @@ export default {
       }
     },
     placeholder() {
-      if (this.item.component === 'el-input') {
-        return this.item.placeholder || this.inputDefaultPlaceholder;
+      if (this.item.component === "el-input") {
+        return this.item.placeholder || this.defaultPlaceholder.input;
       }
-      return this.item.placeholder || this.selectDefaultPlaceholder;
-    }
+      return this.item.placeholder || this.defaultPlaceholder.select;
+    },
   },
   watch: {
+    value: {
+      handler(val) {
+        this.inpValue = val;
+      },
+      immediate: true,
+    },
+    inpValue: {
+      handler() {
+        if (this.item.$$watchValue) {
+          this.item.$$watchValue(this.inpValue);
+        }
+        this.hanldeInpValueChange();
+      },
+      immediate: true,
+    },
     formData: {
       handler() {
         if (this.item.$calc) {
@@ -137,12 +154,6 @@ export default {
       deep: true,
       immediate: true,
     },
-    inpValue: {
-      handler() {
-        this.hanldeInpValueChange();
-      },
-      deep: true,
-    },
   },
   mounted() {
     this.init();
@@ -156,12 +167,25 @@ export default {
   methods: {
     /**
      * 初始化
+     * 默认值和options
      */
     init() {
+      if (this.item.default !== undefined) {
+        this.inpValue = this.item.default;
+      }
       const { fieldId, component, $index, $listen, options } = this.item;
       switch (component) {
         case "el-select":
+          if (this.item.multiple) {
+            this.inpValue = [];
+          }
+          this.optionList = options;
+          break;
         case "el-radio":
+          this.optionList = options;
+          break;
+        case "el-checkbox":
+          this.inpValue = [];
           this.optionList = options;
           break;
       }
@@ -192,8 +216,8 @@ export default {
     /**
      * 注入数据时，触发change事件
      */
-    initChange(componentName, val) {
-      switch (componentName) {
+    initChange(component, val) {
+      switch (component) {
         case "el-radio":
           this.elRadioChange(val);
           break;
@@ -231,14 +255,19 @@ export default {
       if (!waitSubscribe) {
         return;
       }
+      // 当前字段的值，控制其他字段不可编辑
       waitSubscribe.forEach((i) => {
         let publisher = $listen.$publish[i.fieldId];
         const fn = (value) => {
-          this.editStatus = this.inpValue === value;
+          if (Array.isArray(value)) {
+            // 多选的处理
+            this.editStatus = !value.includes(i.targetVal);
+          } else {
+            this.editStatus = !(i.targetVal === value);
+          }
+          return this.editStatus;
         };
-        if (publisher) {
-          publisher.push(fn);
-        }
+        publisher && publisher.push({ fn, index });
       });
     },
     /**
@@ -257,9 +286,9 @@ export default {
      */
     hanldeInpValueChange() {
       if (Array.isArray(this.$actionPublish)) {
-        this.$actionPublish = this.$actionPublish.filter((f) =>
-          f(this.inpValue, this)
-        );
+        this.$actionPublish = this.$actionPublish.filter((f) => {
+          return f(this.inpValue, this);
+        });
       }
     },
     /**
@@ -280,10 +309,10 @@ export default {
         this.optionList = res;
       });
     },
-    elInputChange() {},
-    elSelectChange() {},
-    elRadioChange() {},
-    elCheckBoxChange() {},
+    elInputChange(val) {},
+    elSelectChange(val) {},
+    elRadioChange(val) {},
+    elCheckBoxChange(val) {},
   },
 };
 </script>
