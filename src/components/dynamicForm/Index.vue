@@ -27,6 +27,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    actionPublishConfig: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -43,14 +47,11 @@ export default {
       const { $listen, tplList } = formFormat.call(this, this.formConfig);
       this.$listen = $listen;
       this.tplList = tplList;
-      const fieldKey = "formData.basic.name";
-      this.registerActionPublish(fieldKey, (val) => {
-        console.log(1111, val);
-        return true;
-      });
-      this.registerActionPublish("formData.basic.sex", (val) => {
-        console.log(2222, val);
-        return true;
+      this.actionPublishConfig.forEach(item => {
+        this.registerActionPublish(item.fieldKey, (val) => {
+          item.cb(val);
+          return true;
+        });
       });
     },
     /**

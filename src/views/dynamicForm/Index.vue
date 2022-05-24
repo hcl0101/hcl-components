@@ -3,6 +3,7 @@
     ref="dynamic-form"
     :form-mode="formMode"
     :form-config="formConfig"
+    :action-publish-config="actionPublishConfig"
     @submit="handleSubmit"
   />
 </template>
@@ -17,15 +18,25 @@ export default {
     return {
       formMode: "create",
       formConfig: formConfig,
+      actionPublishConfig: [
+        {
+          fieldKey: "formData.basic.name",
+          cb: this.handleNameChange
+        },
+        {
+          fieldKey: "formData.basic.country",
+          cb: this.handleCountryChange
+        },
+      ]
     };
   },
-  mounted() {
-    // const fieldKey = "formData.basic.name";
-    // this.$refs["dynamic-form"].registerActionPublish(fieldKey, (val) => {
-    //   console.log(1111, val);
-    // });
-  },
   methods: {
+    handleNameChange(val) {
+      console.log("name", val);
+    },
+    handleCountryChange(val) {
+      console.log("country", val);
+    },
     handleSubmit(formData) {
       console.log(11111, formData);
     },

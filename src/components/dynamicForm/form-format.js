@@ -55,10 +55,10 @@
           value,
         } = i;
         Array.isArray(fields) && fields.forEach((field) => {
-          if (!$listen.$waitSubscribe[field]) {
-            $listen.$waitSubscribe[field] = [];
+          if (!$listen.$subscribe[field]) {
+            $listen.$subscribe[field] = [];
           }
-          $listen.$waitSubscribe[field].push({
+          $listen.$subscribe[field].push({
             ...o,
             rules,
             targetVal: value,
@@ -102,7 +102,7 @@ function format(list = []) {
   const rootIndex = setIndex();
   const $listen = {
     $publish: {},       // 发布者
-    $waitSubscribe: {}, // 订阅者
+    $subscribe: {},     // 订阅者
     $tranform: {},      // 数据转换
     $actionValue: {},   // 动态赋值
     $actionPublish: {}, // 动态响应的发布

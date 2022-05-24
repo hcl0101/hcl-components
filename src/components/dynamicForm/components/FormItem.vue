@@ -251,12 +251,12 @@ export default {
     handleSubscribe() {
       const { $index, $listen, fieldId } = this.item;
       const index = $index.join(".");
-      const waitSubscribe = $listen.$waitSubscribe[index];
-      if (!waitSubscribe) {
+      const subscribe = $listen.$subscribe[index];
+      if (!subscribe) {
         return;
       }
       // 当前字段的值，控制其他字段不可编辑
-      waitSubscribe.forEach((i) => {
+      subscribe.forEach((i) => {
         let publisher = $listen.$publish[i.fieldId];
         const fn = (value) => {
           if (Array.isArray(value)) {
