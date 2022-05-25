@@ -70,8 +70,9 @@ import validate from './utils/validate';
           const map = {};
           $listen.$publish[fieldId].forEach(({ fn, index }) => {
             // fn(value) 的返回值是对应组件的editStatus
-            // 当订阅者中的函数未执行，或执行结果为true时，继续执行该订阅者中的其他函数
+            // 当发布者中的订阅函数未执行，或执行结果为true时，继续执行该其他订阅
             // 即：当执行到为false时，不执行其余函数
+            // 目的是为了解决多个字段控制同一个字段时的互斥问题
             if (map[index] === undefined || map[index] === true) {
               map[index] = fn(value);
             }

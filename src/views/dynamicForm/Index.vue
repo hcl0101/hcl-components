@@ -21,14 +21,21 @@ export default {
       actionPublishConfig: [
         {
           fieldKey: "formData.basic.name",
-          cb: this.handleNameChange
+          cb: this.handleNameChange,
         },
         {
           fieldKey: "formData.basic.country",
-          cb: this.handleCountryChange
+          cb: this.handleCountryChange,
         },
-      ]
+      ],
     };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.$refs["dynamic-form"].setFieldsValue({
+        basic: { name: "xxx", "name--label": "xxx111" },
+      });
+    });
   },
   methods: {
     handleNameChange(val) {

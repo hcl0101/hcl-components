@@ -47,7 +47,7 @@ export default {
       const { $listen, tplList } = formFormat.call(this, this.formConfig);
       this.$listen = $listen;
       this.tplList = tplList;
-      this.actionPublishConfig.forEach(item => {
+      this.actionPublishConfig.forEach((item) => {
         this.registerActionPublish(item.fieldKey, (val) => {
           item.cb(val);
           return true;
@@ -69,9 +69,29 @@ export default {
       $actionPublish[key].push(cb);
     },
     /**
+     * 设置表单值
+     */
+    setFieldsValue(data) {
+      const { $actionValue } = this.$listen;
+      this.tplList.forEach((tpl) => {
+        const { groupNo, fields } = tpl;
+        const groupData = data[groupNo];
+        Object.keys(groupData)
+          .filter((v) => v.indexOf("--label") == -1)
+          .forEach((field) => {
+            const key = `formData.${groupNo}.${field}`;
+            $actionValue[key].forEach((f) =>
+              f(groupData[field], groupData[field + "--label"])
+            );
+          });
+      });
+    },
+    /**
      * 组件表单数据变化
      */
-    groupFormDataChange(formData, groupTpl) {},
+    groupFormDataChange(formData, groupTpl) {
+      this.formData[groupTpl.groupNo] = formData;
+    },
   },
 };
 </script>
