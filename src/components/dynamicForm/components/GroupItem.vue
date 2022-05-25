@@ -58,7 +58,37 @@ export default {
       rules: {},
     };
   },
+  created() {
+    this.init();
+  },
+  watch: {
+    groupFormData: {
+      handler(val) {
+        const { groupNo } = this.tpl;
+        this.$emit("change", {
+          ...this.formData[groupNo],
+          ...this.groupFormData,
+        });
+      },
+      deep: true,
+      immediate: true,
+    }
+  },
   methods: {
+    init() {
+      if (!this.tpl.$form) {
+        return;
+      }
+      const { formData = {}, rules = {} } = this.tpl.$form;
+      const { groupNo = "" } = this.tpl;
+      this.groupFormData = {
+        ...formData,
+        ...this.groupFormData,
+      };
+      this.rules = {
+        ...rules,
+      };
+    },
     handleFormChange() {
 
     }

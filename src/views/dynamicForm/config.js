@@ -11,6 +11,8 @@ export default [
         display: 1,
         required: 1,
         edit: 1,
+        minLength: 5,
+        maxLength: 10
       },
       {
         component: "el-select",

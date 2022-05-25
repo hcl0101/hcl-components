@@ -1,3 +1,7 @@
+import models from "./rulesModel";
+import handleAssertRule from './handle-assert-rule';
+import validate from './utils/validate';
+
 /**
  * 设置索引key
  */
@@ -19,25 +23,16 @@
       $index: setIndex(groupItem.$index, o.fieldId),
       $listen,
     };
-    // const model = models[o.mold];
-    // if (!model) {
-    //   return fieldItem;
-    // }
-    // const {
-    //   item,
-    //   rule,
-    //   defaultValue,
-    // } = model.call(this, o, $listen);
-    // const assertRule = handleAssertRule.call(this, o, $listen);
-    // formData[o.fieldId] = validate.isSet(defaultValue) ? defaultValue : '';
-    // rules[o.fieldId] = rule.concat(assertRule);
+    const model = models[o.component];
+    if (!model) {
+      return fieldItem;
+    }
+    // const assertRule = handleAssertRule.call(this, o);
+    formData[o.fieldId] = validate.isSet(o.default) ? o.default : '';
+    rules[o.fieldId] = model.call(this, o);
     // fieldItem.$tpl = item;
-    if (o.display === 1) {
-      fieldItem.$show = true;
-    }
-    if (o.edit !== 1) {
-      fieldItem.$disabled = true;
-    }
+    fieldItem.$show = o.display === 1;
+    fieldItem.$disabled = o.edit !== 1;
     // if (o.calculation) {
     //   fieldItem.$calc = (_this, isInTable, rowNumber) => {
     //     return handleCalc.call(_this, fieldItem, { isInTable, rowNumber });

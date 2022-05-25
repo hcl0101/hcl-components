@@ -132,26 +132,13 @@ export default {
       immediate: true,
     },
     inpValue: {
-      handler() {
+      handler(val) {
         if (this.item.$$watchValue) {
           this.item.$$watchValue(this.inpValue);
         }
         this.hanldeInpValueChange();
+        this.$emit("input", val);
       },
-      immediate: true,
-    },
-    formData: {
-      handler() {
-        if (this.item.$calc) {
-          if (this.calcTimer) {
-            clearTimeout(this.calcTimer);
-          }
-          this.calcTimer = setTimeout(() => {
-            this.inpValue = this.item.$calc();
-          }, 300);
-        }
-      },
-      deep: true,
       immediate: true,
     },
   },
